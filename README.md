@@ -331,7 +331,29 @@ Se placer dans le répertoire `/root/rpmbuild/RPMS/x86_64/` pour faire cette com
 
 Si nécessaire en cas de conflit avec une architecture déjà présente, ajouter ce flag pour contourner le problème. **Ce n'est clairement pas recommandé**.<br>
 
-`yum --nogpgcheck localinstall * --setopt=protected_multilib=false -y`
+`yum --nogpgcheck localinstall * --setopt=protected_multilib=false -y` <br>
+
+
+La meilleur chose à faire est de trouver les anciens paquets qui ont une version antérieur. <br>
+
+`rpm -qa | grep slurm`
+
+Supprimer ces paquets (changer le paquet). <br>
+
+`rpm -e --nodeps slurm-doc-20.11.9-1.el7.x86_64`
+
+Si nécessaire, reconstruire la base de données rpm. <br>
+
+```
+rpm --rebuilddb
+yum clean all
+yum update
+rm -f /var/lib/rpm/__db.*
+rpm --rebuilddb
+```
+
+Puis refaire un installation des paquets.
+
     
 
 Sur la machine principale (nvidia0) modifier le fichier de configuration `slurm.conf`.
