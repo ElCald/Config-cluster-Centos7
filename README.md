@@ -254,7 +254,7 @@ useradd -m -c "SLURM workload manager" -d /var/lib/slurm -u $SLURMUSER -g slurm 
 `clush -g all munge --version`
     
 
-**Sur la machine root :**
+**Sur la machine master :**
 
 `sudo create-munge-key`
     
@@ -262,8 +262,7 @@ On vérifie que la clé à bien été créée
 
 `ls -l /etc/munge/munge.key`
     
-#### On la copie sur chaque noeuds du cluster 
-*Je n’ai pas trouvé le moyen de la faire marcher avec clush*
+#### On la copie sur chaque noeuds du cluster depuis la master
 ```bash
 scp /etc/munge/munge.key root@nvidia1:/etc/munge/munge.key
 scp /etc/munge/munge.key root@nvidia2:/etc/munge/munge.key
