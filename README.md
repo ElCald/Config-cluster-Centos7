@@ -408,7 +408,7 @@ chmod 755 /var/log/slurmctld.log
 `nano /usr/lib/systemd/system/slurmctld.service`<br>
 Ajouter cette ligne : `PIDFile=/var/run/slurmctld.pid`
     
-`nano /usr/lib/systemd/system/slurmcdbd.service`<br>
+`nano /usr/lib/systemd/system/slurmdbd.service`<br>
 Ajouter cette ligne : `PIDFile=/var/run/slurmdbd.pid`
 
 `nano /usr/lib/systemd/system/slurmd.service`<br>
