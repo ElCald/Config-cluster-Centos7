@@ -279,7 +279,8 @@ Note : Un fichier de test pour MPI est dans le répertoire apps commun à toutes
 [Youtube - How to Make a Cluster Computer](https://youtu.be/mm11Ws-9DRc?si=5W03ex3sy5CuHVsP)*
 
 Créer les utilisateurs globaux pour `Slurm ` et `Munge `. 
-*Le plus simple est de mettre ces commandes dans un script shell et de l’éxecuter avec clush sur toutes les machines* :
+*Le plus simple est de mettre ces commandes dans un script shell et de l’éxecuter avec clush sur toutes les machines* : <br>
+Utiliser `script1.sh`
 ```bash
 export MUNGEUSER=991
 groupadd -g $MUNGEUSER munge
