@@ -299,13 +299,13 @@ yum install autoconf
 yum install automake
 yum install perl-ExtUtils-MakeMaker
 ```
-Dans le répertoire partagé NFS donc `/apps` ou `/home` télécharger Slurm **prendre la dernière version**. <br>
+Dans le répertoire partagé NFS donc `/apps` ou `/home` télécharger Slurm **prendre la dernière version**. Conseil, créer un répertoire par exemple `slurm_installation` pour y décompresser le tar.bz2 téléchargé <br>
 *Chercher la dernière version ici -> https://download.schedmd.com/slurm/*
     
 `wget https://download.schedmd.com/slurm/slurm-24.11.0.tar.bz2`
     
 
-#### Décompresser
+#### Décompresser dans le répertoire `slurm_installation` s'il a été crée
     
 `rpmbuild -ta slurm-24.11.0.tar.bz2`
     
