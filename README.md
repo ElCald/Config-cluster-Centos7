@@ -302,12 +302,12 @@ yum install perl-ExtUtils-MakeMaker
 Dans le répertoire partagé NFS donc `/apps` ou `/home` télécharger Slurm **prendre la dernière version**. <br>
 *Chercher la dernière version ici -> https://download.schedmd.com/slurm/*
     
-`wget [https://download.schedmd.com/slurm/slurm-24.11.0.tar.bz2]`
+`wget https://download.schedmd.com/slurm/slurm-24.11.0.tar.bz2`
     
 
 #### Décompresser
     
-`rpmbuild -ta [slurm-24.11.0.tar.bz2]`
+`rpmbuild -ta slurm-24.11.0.tar.bz2`
     
 
 #### Vérifier que “rpms” a été crée par “rpmbuild”
