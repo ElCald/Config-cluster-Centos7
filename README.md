@@ -329,7 +329,8 @@ Se placer dans le répertoire `/root/rpmbuild/RPMS/x86_64/` pour faire cette com
     
 `yum --nogpgcheck localinstall * -y` <br>
 
-Si nécessaire en cas de conflit avec une architecture déjà présente, ajouter ce flag pour contourner le problème. **Ce n'est clairement pas recommandé**.
+Si nécessaire en cas de conflit avec une architecture déjà présente, ajouter ce flag pour contourner le problème. **Ce n'est clairement pas recommandé**.<br>
+
 `yum --nogpgcheck localinstall * --setopt=protected_multilib=false -y`
     
 
