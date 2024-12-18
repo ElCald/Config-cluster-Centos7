@@ -1,4 +1,4 @@
-# Documentation installation d’un cluster sur CentOS 7
+# Documentation installation d’un cluster sur Centos7
  Installation de `Clush`, `NFS`, `MPI`, `Slurm`. Configuration de `SSH` et script pour créer un utilisateur.
 | **Machine** | **Type** | **Adresse** |
 |--|--|--|
