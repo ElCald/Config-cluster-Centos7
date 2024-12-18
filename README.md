@@ -256,21 +256,25 @@ export SLURMUSER=992
 groupadd -g $SLURMUSER slurm
 useradd -m -c "SLURM workload manager" -d /var/lib/slurm -u $SLURMUSER -g slurm -s /bin/bash slurm
 ```
-`clush -g all /apps/script1.sh`
+```bash
+clush -g all /apps/script1.sh
+```
 
 ## Installation de Munge :
-
-`clush -g all sudo yum -y install munge munge-libs munge-devel`<br>
-`clush -g all munge --version`
-    
+```bash
+clush -g all sudo yum -y install munge munge-libs munge-devel
+clush -g all munge --version
+```
 
 **Sur la machine master :**
+```bash
+sudo create-munge-key
+```
 
-`sudo create-munge-key`
-    
 On vérifie que la clé à bien été créée
-
-`ls -l /etc/munge/munge.key`
+```bash
+ls -l /etc/munge/munge.key
+```
     
 #### On la copie sur chaque noeuds du cluster depuis la master
 ```bash
@@ -281,13 +285,13 @@ scp /etc/munge/munge.key root@nvidia4:/etc/munge/munge.key
 ```
 
 #### On met les bonnes permissions sur le fichier de la clé :
-
-`clush -g all sudo chmod 400 /etc/munge/munge.key`<br>
-`clush -g all sudo chown munge:munge /etc/munge/munge.key`
-    
+```bash
+clush -g all sudo chmod 400 /etc/munge/munge.key
+clush -g all sudo chown munge:munge /etc/munge/munge.key
+```
 
 ### On lance Munge, puis on l’active au démarrage et on affiche son statut :
-```
+```bash
 clush -g all sudo systemctl start munge
 clush -g all sudo systemctl enable munge
 clush -g all sudo systemctl status munge
@@ -297,8 +301,9 @@ clush -g all sudo systemctl status munge
  ## Installation de Slurm
 
 #### Installation des dépendances avec clush
-    
-`clush -g all yum install openssl openssl-devel pam-devel numactl numactl-devel hwloc hwloc-devel lua lua-devel readline-devel rrdtool-devel ncurses-devel man2html libibmad libibumad -y`
+```bash
+clush -g all yum install openssl openssl-devel pam-devel numactl numactl-devel hwloc hwloc-devel lua lua-devel readline-devel rrdtool-devel ncurses-devel man2html libibmad libibumad -y
+```
     
 #### Installer rpmbuild, python3, mariadb, perl, autoconf, automake
 ```bash
@@ -311,50 +316,57 @@ yum install perl-ExtUtils-MakeMaker
 ```
 Dans le répertoire partagé NFS donc `/apps` ou `/home` télécharger Slurm **prendre la dernière version**. Conseil, créer un répertoire par exemple `slurm_installation` pour y décompresser le tar.bz2 téléchargé <br>
 *Chercher la dernière version ici -> https://download.schedmd.com/slurm/*
-    
-`wget https://download.schedmd.com/slurm/slurm-24.11.0.tar.bz2`
-    
+```bash
+wget https://download.schedmd.com/slurm/slurm-24.11.0.tar.bz2
+```
 
 #### Décompresser dans le répertoire `slurm_installation` s'il a été crée
-    
-`rpmbuild -ta slurm-24.11.0.tar.bz2`
-    
+```bash
+rpmbuild -ta slurm-24.11.0.tar.bz2
+```
 
 #### Vérifier que “rpms” a été crée par “rpmbuild”
-    
-`cd /root/rpmbuild/RPMS/x86_64`
+```bash
+cd /root/rpmbuild/RPMS/x86_64
+```
     
 
 #### Copier le contenu du répertoire `/root/rpmbuild/RPMS/x86_64/` vers `/apps/slurm-rpms`
-
-`mkdir /apps/slurm-rpms`
+```bash
+mkdir /apps/slurm-rpms
+```
     
 
 Se placer dans le répertoire `/root/rpmbuild/RPMS/x86_64/` pour faire cette commande
-
-`cp * /apps/slurm-rpms`
+```bash
+cp * /apps/slurm-rpms
+```
     
 #### Installation de slurmd.
 À faire manuellement sur chacune des machines dans `/apps/slurm-rpms`. 
-    
-`yum --nogpgcheck localinstall * -y` <br>
+```bash
+yum --nogpgcheck localinstall * -y
+```
 
 Si nécessaire en cas de conflit avec une architecture déjà présente, ajouter ce flag pour contourner le problème. **Ce n'est clairement pas recommandé**.<br>
+```bash
+yum --nogpgcheck localinstall * --setopt=protected_multilib=false -y
+```
 
-`yum --nogpgcheck localinstall * --setopt=protected_multilib=false -y` <br>
 
-
-La meilleur chose à faire est de trouver les anciens paquets qui ont une version antérieur. <br>
-
-`rpm -qa | grep slurm`
+En cas de corruption de la base de données rpm suite à la dernière commande, faire ce qui suit. Sinon passer à la suite. <br>
+```bash
+rpm -qa | grep slurm
+```
 
 Supprimer ces paquets (changer le paquet). <br>
-
-`rpm -e --nodeps slurm-doc-20.11.9-1.el7.x86_64`
+```bash
+rpm -e --nodeps slurm-doc-20.11.9-1.el7.x86_64
+```
 
 Si nécessaire, reconstruire la base de données rpm. <br>
 
-```
+```bash
 rpm --rebuilddb
 yum clean all
 yum update
@@ -362,13 +374,14 @@ rm -f /var/lib/rpm/__db.*
 rpm --rebuilddb
 ```
 
-Puis refaire un installation des paquets.
-
+Puis refaire un installation des paquets.<br>
+Fin de l'étape de réparation de la bdd.
     
 
 Sur la machine principale (nvidia0) modifier le fichier de configuration `slurm.conf`.
-    
-`sudo nano /etc/slurm/slurm.conf`
+```bash
+sudo nano /etc/slurm/slurm.conf
+```
     
 
 Copier le fichier `slurm.conf` ici 
@@ -414,26 +427,33 @@ chmod 755 /var/log/slurmctld.log
     
 
 ### Modifier les PID system sur la machine principale
-    
-`nano /usr/lib/systemd/system/slurmctld.service`<br>
+```bash
+nano /usr/lib/systemd/system/slurmctld.service
+```
 Ajouter cette ligne : `PIDFile=/var/run/slurmctld.pid`
-    
-`nano /usr/lib/systemd/system/slurmdbd.service`<br>
+
+```bash
+nano /usr/lib/systemd/system/slurmdbd.service
+```
 Ajouter cette ligne : `PIDFile=/var/run/slurmdbd.pid`
 
-`nano /usr/lib/systemd/system/slurmd.service`<br>
+```bash
+nano /usr/lib/systemd/system/slurmd.service
+```
 Ajouter cette ligne : `PIDFile=/var/run/slurmd.pid`
 
 #### Depuis la machine principale. À voir l’utilité de cette commande ?
-    
-`echo CgroupMountpoint=/sys/fs/cgroup >> /etc/slurm/cgroup.conf`
+```bash
+echo CgroupMountpoint=/sys/fs/cgroup >> /etc/slurm/cgroup.conf
+```
     
 
 #### Sur les machines computes. Configurer les permissions des fichiers/répertoires pour slurm.
     
 *Astuce, créer un script dans le répertoire NFS et faire un :*
-    
-`clush -g computes /home/script.sh`
+```bash
+clush -g computes /home/script.sh
+```
     
 Mettre les lignes ci-dessous dans le script
 ```bash
@@ -445,8 +465,9 @@ chown slurm: /var/log/slurm/slurmd.log
 ```
 
 #### Vérification de la bonne installation de slurm sur toutes les machines.
-    
-`clush -g all slurmd -C`
+```bash
+clush -g all slurmd -C
+```
 
 Exemple de bon résultat :
 
@@ -458,13 +479,13 @@ nvidia1: UpTime=25-04:00:46
 
 ### Désactivation des firewall sur toutes les machines computes
     
-````
+````bash
 clush -g computes systemctl stop firewalld
 clush -g computes systemctl disable firewalld
 ````
 
 Sur la machine principale. Ouvrir ces ports par défaut pour slurm et recharger le firewall.
-````
+```bash
 firewall-cmd --permanent --zone=public --add-port=6817/udp
 firewall-cmd --permanent --zone=public --add-port=6817/tcp
 firewall-cmd --permanent --zone=public --add-port=6818/udp
@@ -472,93 +493,94 @@ firewall-cmd --permanent --zone=public --add-port=6818/tcp
 firewall-cmd --permanent --zone=public --add-port=6819/udp
 firewall-cmd --permanent --zone=public --add-port=6819/tcp
 firewall-cmd --reload
-````
+```
 
 Vérifier sur la machine principale les ports ouverts
-    
-`firewall-cmd --list-all`
-    
+```bash
+firewall-cmd --list-all
+```
 
 ## Synchronisation de l’horloge sur toutes les machines
 
-````
+```bash
 clush -g all yum install ntp -y
 clush -g all chkconfig ntpd on
 clush -g all ntpdate pool.ntp.org
 clush -g all systemctl start ntpd
-````
+```
 
 ## Installation de MariaDB sur la machine principale
-    
-`yum install mariadb-server mariadb-devel -y`
+```bash
+yum install mariadb-server mariadb-devel -y
+```
     
 ### Lancement du service Mariadb
-    
-````
+```bash
 systemctl enable mariadb
 systemctl start mariadb
 systemctl status mariadb
-````
+```
 
 #### Création de l’utilisateur “slurm” dans la bdd
-    
 
-```
+```bash
 mysql
 ```
-````
+```bash
 MariaDB[(none)]> GRANT ALL ON slurm_acct_db.* TO 'slurm'@'localhost' IDENTIFIED BY '1234' with grant option;
     
 MariaDB[(none)]> SHOW VARIABLES LIKE 'have_innodb';
     
- MariaDB[(none)]> FLUSH PRIVILEGES;
+MariaDB[(none)]> FLUSH PRIVILEGES;
     
 MariaDB[(none)]> CREATE DATABASE slurm_acct_db;
     
 MariaDB[(none)]> quit;
-````
+```
 
  Vérifier la connexion avec le mot de passe “1234”
     
-````
+```bash
 mysql -p -u slurm
-````
-````
+```
+```bash
 MariaDB[(none)]> show grants;
 MariaDB[(none)]> quit;
-````
+```
 
 ### Créer un fichier de configuration
-    
-`nano /etc/my.cnf.d/innodb.cnf` 
+```bash
+nano /etc/my.cnf.d/innodb.cnf
+```
 
 Copier les lignes ci-dessous à l’intérieur
     
-````
+```
 [mysqld]
 innodb_buffer_pool_size=1024M
 innodb_log_file_size=64M
 innodb_lock_wait_timeout=900
-````
+```
 
 #### Implémenter ces modifications en arrêtant le service Mariadb
 
-````
+```bash
 systemctl stop mariadb
 mv /var/lib/mysql/ib_logfile? /tmp/
 systemctl start mariadb
-````
+```
 #### Vérifier les paramètres courant
     
-````
+```bash
 mysql
 
 MariaDB[(none)]> SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
- ````   
+``` 
 
 #### Modifier fichier de config slurmdbd (cette commande va le créer s’il n’existe pas)
-    
-`nano /etc/slurm/slurmdbd.conf`
+```bash
+nano /etc/slurm/slurmdbd.conf
+```
 
 Copier le contenue de
 [https://github.com/Artlands/Install-Slurm/blob/master/Configs/slurmdbd.conf](https://github.com/Artlands/Install-Slurm/blob/master/Configs/slurmdbd.conf)
@@ -566,34 +588,33 @@ Copier le contenue de
 Le coller en modifiant s’il le faut certaines options dans `/etc/slurm/slurmdbd.conf`
     
 #### Mise en place des permissions pour slurmdbd.
-    
-````
+```bash
 chown slurm: /etc/slurm/slurmdbd.conf
 chmod 600 /etc/slurm/slurmdbd.conf
 touch /var/log/slurmdbd.log
 chown slurm: /var/log/slurmdbd.log
-````
+```
 
 Vérifier manuellement le service slurmdbd (Ctrl+C pour quitter)
-    
-`slurmdbd -D -vvv`
+```bash
+slurmdbd -D -vvv
+```
     
 ### Depuis la machine principale. Recharger le system daemon
-    
-`systemctl daemon-reload`
+```bash
+systemctl daemon-reload
+```
     
 ### Depuis la machine principale. Lancer le system slurmdbd.
-    
-````
+```bash
 systemctl enable slurmdbd
 systemctl start slurmdbd
 systemctl status slurmdbd
-````
+```
 
 ### Depuis la machine principale. Lancer le system slurm daemon.
-    
-````
+```bash
 systemctl enable slurmctld.service
 systemctl start slurmctld.service
 systemctl status slurmctld.service
-````
+```
