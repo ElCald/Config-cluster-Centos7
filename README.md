@@ -327,7 +327,10 @@ Se placer dans le répertoire `/root/rpmbuild/RPMS/x86_64/` pour faire cette com
 #### Installation de slurmd.
 À faire manuellement sur chacune des machines dans `/apps/slurm-rpms`. 
     
-`yum --nogpgcheck localinstall * -y`
+`yum --nogpgcheck localinstall * -y` <br>
+
+Si nécessaire en cas de conflit avec une architecture déjà présente, ajouter ce flag pour contourner le problème. **Ce n'est clairement pas recommandé**.
+`yum --nogpgcheck localinstall * --setopt=protected_multilib=false -y`
     
 
 Sur la machine principale (nvidia0) modifier le fichier de configuration `slurm.conf`.
