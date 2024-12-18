@@ -384,10 +384,14 @@ scp /etc/slurm/slurm.conf root@nvidia4:/etc/slurm/
 #### Depuis la machine principale. Configurer les permissions des fichiers/répertoire pour slurm.
     
 ```bash
+mkdir /var/log/slurm/
 mkdir /var/spool/slurmctld/
-mkdir /var/spool/slurm
+mkdir /var/spool/slurm/
 touch /var/log/slurmctld.log
-touch /var/log/slurm_jobacct.log /var/log/slurm/slurm_jobcomp.log
+touch /var/log/slurm_jobacct.log
+touch /var/log/slurm/slurm_jobcomp.log
+chown slurm: /var/log/slurm_jobacct.log
+chown slurm: /var/log/slurm/slurm_jobcomp.log
 chown slurm:slurm -R /var/log/slurm
 chmod 755 /var/log/slurm/
 chown slurm:slurm /var/spool/slurmctld/
@@ -396,7 +400,6 @@ chown slurm: /var/spool/slurm/
 chmod 755 /var/spool/slurm/
 chown slurm: /var/log/slurmctld.log
 chmod 755 /var/log/slurmctld.log
-chown slurm: /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
 ```
     
 
