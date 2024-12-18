@@ -21,12 +21,15 @@ sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/CentOS-*.repo
 # 0/ Passwd + hostname
 
 ### Changement du mot de passe :
-`sudo passwd`
+```bash
+sudo passwd
+```
 
 ### Changement du nom sur chaque machine :
-
-`sudo hostnamectl set-hostname nvidia0` 
-`sudo nano /etc/hosts`
+```bash
+sudo hostnamectl set-hostname nvidia0
+sudo nano /etc/hosts
+```
     
 Ajouts de l’ip de toutes les machines suivie de leur nom
 ````
@@ -44,12 +47,14 @@ Exemple contenu `/etc/hosts`: <br>
 Connexion ssh du compte root de la machine admin vers admin et vers computes
 
 ###  Création de la clé ssh avec protocole RSA :
-
-`ssh-keygen -t rsa -b 4096` 
+```bash
+ssh-keygen -t rsa -b 4096
+```
     
 #### Copie de la clé ssh dans toutes les machines :
-    
-`ssh-copy-id root@10.124.2.[46-50]`
+```bash
+ssh-copy-id root@10.124.2.[46-50]
+```
     
 **Ne pas oublier la connexion ssh de nvidia0 vers nvidia0 et faire une 1ère connexion ssh avec toutes les machines pour enregistrer le fingerprint dans le répertoire** `~/.ssh/known_hosts`
     
@@ -57,21 +62,24 @@ Connexion ssh du compte root de la machine admin vers admin et vers computes
 # 2/ Clush
 
 ### Dépendances :
-    
-`sudo yum install -y perl-Errno perl-File-Temp perl-IO-File perl-IO-Socket-SSL perl-Getopt-Long perl-Text-Glob` 
+```bash
+sudo yum install -y perl-Errno perl-File-Temp perl-IO-File perl-IO-Socket-SSL perl-Getopt-Long perl-Text-Glob
+```
 
 ### Installation de EPEL:
-    
-
-`sudo yum install -y epel-release` 
+```bash
+sudo yum install -y epel-release
+```
 
 ### Installer clush :
-    
-` sudo yum install -y clustershell`
+```bash 
+sudo yum install -y clustershell
+```
 
 ###  Configurer noeuds :
-    
-`sudo nano /etc/clustershell/groups` 
+```bash
+sudo nano /etc/clustershell/groups 
+```
 
 Ajouter dans le fichier `/etc/clustershell/groups` (**PAS D’ESPACE ENTRE** “:” ET “all” ou “computes” ou “admin”):
     
@@ -81,10 +89,10 @@ computes: nvidia1 nvidia2 nvidia3 nvidia4
 admin: nvidia0
 ```
 ### Exemples de vérifications
-    
-` clush -w 10.124.2.[46-50] "hostname -I" `<br>
-` clush -g Cl_Nvidia echo "Bonjour" `
-    
+```bash
+clush -w 10.124.2.[46-50] "hostname -I"
+clush -g Cl_Nvidia echo "Bonjour"
+```
 
 # 3/ NFS
 
@@ -95,17 +103,19 @@ Les répertoires partagés seront `/apps` et `/home`.
     
 
 ### Installer NFS sur toutes les machines:
+```bash
+clush -g all sudo yum -y install nfs-utils
+```
 
-`clush -g all sudo yum -y install nfs-utils`
-    
 Créer répertoire apps si il n’existe pas :
-    
-` clush -g all sudo mkdir -p /apps`
+```bash
+clush -g all sudo mkdir -p /apps
+```
 
 ### Editer le fichier exports :
-
-`sudo nano /etc/exports`
-    
+```bash
+sudo nano /etc/exports
+```
 
 Ajouter les lignes suivantes :
 ````
@@ -121,30 +131,32 @@ nvidia4(rw,sync,no_root_squash,no_subtree_check)
 ````
 
 ### Démarrer le service NFS et le configurer pour qu’il démarre automatiquement
-    
-
-`sudo systemctl enable nfs-server`<br>
-`sudo systemctl start nfs-server`
-    
+```bash
+sudo systemctl enable nfs-server
+sudo systemctl start nfs-server
+```
 
 Vérifier que les dossiers sont biens exportés : 
-`sudo exportfs -v`
-    
+```bash
+sudo exportfs -v
+```
+
 ### Ajout de règles au pare-feu :
-   
-` sudo firewall-cmd --permanent --add-service=nfs sudo firewall-cmd --permanent --add-service=mountd sudo firewall-cmd --permanent --add-service=rpc-bind sudo firewall-cmd --reload `
+```bash
+sudo firewall-cmd --permanent --add-service=nfs sudo firewall-cmd --permanent --add-service=mountd sudo firewall-cmd --permanent --add-service=rpc-bind sudo firewall-cmd --reload
+```
     
 
 Sur chaques machines **hormis la root**, montez les répertoires :
-    
-`clush -g computes sudo mount -t nfs machine0:/home /home`<br>
-`clush -g computes sudo mount -t nfs machine0:/apps /apps`
-    
+```bash
+clush -g computes sudo mount -t nfs machine0:/home /home
+clush -g computes sudo mount -t nfs machine0:/apps /apps
+```
 
 Vérification que les partages ont été montés correctement :
-    
-`clush -g computes df -h | grep nvidia0`
-    
+```bash
+clush -g computes df -h | grep nvidia0
+```
 
 Enfin, pour monter les répertoires automatiquement au démarrage des machines, ajouter ces lignes au fichier `/etc/fstab` de toutes les machines **sauf la root** :
 ````
@@ -159,13 +171,14 @@ nvidia0:/apps /apps nfs defaults 0 0
 Voir `createuser.sh`
 
 ### Donner les permissions au script :
-
-`chmod +x createuser.sh`
+```bash
+chmod +x createuser.sh
+```
 
 ### Exécution du script
-
-`./createuser.sh nom`
-    
+```bash
+./createuser.sh nom
+```
 
 ## Configurer SELinux 
 *Source : <br>
@@ -174,60 +187,57 @@ Voir `createuser.sh`
 SELinux bloque l’accès de ssh aux répertoires et fichiers NFS, pour régler ce problème 2 options.
     
 Retirer tout le système de sécurité SELinux avec :
-
-`setenforce 0`
-    
+```bash
+setenforce 0
+```
 
 OU
 
 Modifier la config pour laisser autoriser l’accès à ssh aux répertoires NFS
-    
-`setsebool -P use_nfs_home_dirs 1`
-    
+```bash
+setsebool -P use_nfs_home_dirs 1
+```
 
 # 5/ MPI
 
 Note : Un fichier de test pour MPI est dans le répertoire apps commun à toutes les machines.
 
 ### Installer mpi sur toutes les machines
-    
-
-`clush -g all sudo yum -y install openmpi`<br>
-`clush -g all sudo yum -y install openmpi-devel`
-    
+```bash
+clush -g all sudo yum -y install openmpi
+clush -g all sudo yum -y install openmpi-devel
+```
 
 ### Ajouter mpi au path
-    
-`clush -g all "echo 'export PATH=/usr/lib64/openmpi/bin:\$PATH' | sudo tee /etc/profile.d/mpi.sh"`
-    
-`clush -g all "echo 'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:\$LD_LIBRARY_PATH' | sudo tee -a /etc/profile.d/mpi.sh"`
-    
+```bash
+clush -g all "echo 'export PATH=/usr/lib64/openmpi/bin:\$PATH' | sudo tee /etc/profile.d/mpi.sh"
+clush -g all "echo 'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:\$LD_LIBRARY_PATH' | sudo tee -a /etc/profile.d/mpi.sh"
+```
 
 ### Recharger le profil global
-    
-`clush -g all "source /etc/profile.d/mpi.sh"`
-    
+```bash
+clush -g all "source /etc/profile.d/mpi.sh"
+```
 
 #### Compiler code mpi (sur une des machines vs toutes les machines)
-    
-
-`mpicc -o /apps/test_mpi /apps/test_mpi.c`<br>
-`clush -g all mpicc -o /apps/test_mpi /apps/test_mpi.c`
-    
+```bash
+mpicc -o /apps/test_mpi /apps/test_mpi.c
+clush -g all mpicc -o /apps/test_mpi /apps/test_mpi.c
+```
 
 ####  Executer code mpi
-
-`mpirun --allow-run-as-root -n 4 /apps/test_mpi`<br>
-`clush -g all mpirun --allow-run-as-root -n 4 /apps/test_mpi`
-    
+```bash
+mpirun --allow-run-as-root -n 4 /apps/test_mpi
+clush -g all mpirun --allow-run-as-root -n 4 /apps/test_mpi
+```
 
 # BONUS :
 
 ### Faire des petits trains :
-    
-`clush -g all "TERM=xterm sl"`<br>
-`clush -g all "TERM=xterm sl -a -l -F"`
-    
+```bash
+clush -g all "TERM=xterm sl"
+clush -g all "TERM=xterm sl -a -l -F"
+```
 
 # 6/ Slurm
 
