@@ -143,7 +143,10 @@ sudo exportfs -v
 
 ### Ajout de règles au pare-feu :
 ```bash
-sudo firewall-cmd --permanent --add-service=nfs sudo firewall-cmd --permanent --add-service=mountd sudo firewall-cmd --permanent --add-service=rpc-bind sudo firewall-cmd --reload
+sudo firewall-cmd --permanent --add-service=nfs
+sudo firewall-cmd --permanent --add-service=mountd
+sudo firewall-cmd --permanent --add-service=rpc-bind
+sudo firewall-cmd --reload
 ```
     
 
