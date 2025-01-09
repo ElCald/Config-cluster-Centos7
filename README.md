@@ -76,7 +76,7 @@ sudo yum install -y epel-release
 sudo yum install -y clustershell
 ```
 
-### Configurer les noeuds sur toutes les machines :
+### Configurer les noeuds sur la machine maître :
 ```bash
 sudo nano /etc/clustershell/groups 
 ```
