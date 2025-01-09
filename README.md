@@ -3,10 +3,10 @@
 | **Machine** | **Type** | **Adresse** |
 |--|--|--|
 | **nvidia0** | Admin | 10.124.2.46 |
-| **nvidia1** | Compute | 10.124.2.47 |
-| **nvidia2** | Compute | 10.124.2.48 |
-| **nvidia3** | Compute | 10.124.2.49 |
-| **nvidia4** | Compute | 10.124.2.50 |
+| **nvidia1** | Computes | 10.124.2.47 |
+| **nvidia2** | Computes | 10.124.2.48 |
+| **nvidia3** | Computes | 10.124.2.49 |
+| **nvidia4** | Computes | 10.124.2.50 |
 
 
 # -1/ Update les mirrors
@@ -31,7 +31,7 @@ sudo hostnamectl set-hostname nvidia0
 sudo nano /etc/hosts
 ```
     
-Ajouts de l’ip de toutes les machines suivie de leur nom
+Ajouts de l’ip de toutes les machines suivie de leur nom dans le DNS
 ````
 10.124.2.46 nvidia0
 10.124.2.47 nvidia1
@@ -44,7 +44,7 @@ Exemple contenu `/etc/hosts`: <br>
 
 # 1/ SSH
 
-Connexion ssh du compte root de la machine admin vers admin et vers computes
+Connexion SSH du compte root de la machine admin vers **admin** et vers **computes**
 
 ###  Création de la clé ssh avec protocole RSA :
 ```bash
@@ -56,27 +56,27 @@ ssh-keygen -t rsa -b 4096
 ssh-copy-id root@10.124.2.[46-50]
 ```
     
-**Ne pas oublier la connexion ssh de nvidia0 vers nvidia0 et faire une 1ère connexion ssh avec toutes les machines pour enregistrer le fingerprint dans le répertoire** `~/.ssh/known_hosts`
+**Ne pas oublier la connexion SSH de `nvidia0` vers `nvidia0` et faire une 1ère connexion SSH avec toutes les machines pour enregistrer le fingerprint dans le répertoire `~/.ssh/known_hosts`**
     
 
 # 2/ Clush
 
-### Dépendances :
+### Installation des dépendances sur toutes les machines :
 ```bash
 sudo yum install -y perl-Errno perl-File-Temp perl-IO-File perl-IO-Socket-SSL perl-Getopt-Long perl-Text-Glob
 ```
 
-### Installation de EPEL:
+### Installation de EPEL  sur toutes les machines :
 ```bash
 sudo yum install -y epel-release
 ```
 
-### Installer clush :
+### Installer Clush sur toutes les machines :
 ```bash 
 sudo yum install -y clustershell
 ```
 
-###  Configurer noeuds :
+### Configurer les noeuds sur toutes les machines :
 ```bash
 sudo nano /etc/clustershell/groups 
 ```
