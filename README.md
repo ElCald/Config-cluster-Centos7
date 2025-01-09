@@ -1,7 +1,7 @@
 # Documentation installation d’un cluster sur Centos7
  Installation de `Clush`, `NFS`, `MPI`, `Slurm`. Configuration de `SSH` et script pour créer un utilisateur.
-| **Machine** | **Type** | **Adresse** |
-|--|--|--|
+| **Machines** | **Type** | **Adresses** |
+|--------------|----------|--------------|
 | **nvidia0** | Admin | 10.124.2.46 |
 | **nvidia1** | Computes | 10.124.2.47 |
 | **nvidia2** | Computes | 10.124.2.48 |
