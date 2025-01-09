@@ -244,11 +244,13 @@ clush -g all "TERM=xterm sl -a -l -F"
 
 # 6/ Slurm
 
+Cette installation nécessite au préalable Clush, NFS et SSH configuré.
+
 *Sources : <br>
 [https://github.com/Artlands/Install-Slurm](https://github.com/Artlands/Install-Slurm)<br>
 [Youtube - How to Make a Cluster Computer](https://youtu.be/mm11Ws-9DRc?si=5W03ex3sy5CuHVsP)*
 
-Créer les utilisateurs globaux pour `Slurm ` et `Munge `. 
+Créer les utilisateurs globaux pour `Slurm` et `Munge`. 
 *Le plus simple est de mettre ces commandes dans un script shell dans un répertoire NFS et de l’éxecuter avec clush sur toutes les machines* : <br>
 Utiliser `script1.sh`
 ```bash
