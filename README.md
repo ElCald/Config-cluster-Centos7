@@ -99,7 +99,7 @@ clush -g Cl_Nvidia echo "Bonjour"
 Pour l’installation de NFS sur toutes les machines nous passerons par clush, s’il n’est pas installé, il faudra faire les commandes sur toutes les machines.
 Les répertoires partagés seront `/apps` et `/home`.
 
-*Exécution de toutes les commandes suivantes depuis la machine root (nvidia0).*
+*Exécution de toutes les commandes suivantes depuis la machine admin (nvidia0).*
     
 
 ### Installer NFS sur toutes les machines:
@@ -107,12 +107,12 @@ Les répertoires partagés seront `/apps` et `/home`.
 clush -g all sudo yum -y install nfs-utils
 ```
 
-Créer répertoire apps si il n’existe pas :
+Créer répertoire `apps` si il n’existe pas :
 ```bash
 clush -g all sudo mkdir -p /apps
 ```
 
-### Editer le fichier exports :
+### Editer le fichier `exports` :
 ```bash
 sudo nano /etc/exports
 ```
@@ -150,7 +150,7 @@ sudo firewall-cmd --reload
 ```
     
 
-Sur chaques machines **hormis la root**, montez les répertoires :
+Sur les machines **computes**, montez les répertoires :
 ```bash
 clush -g computes sudo mount -t nfs machine0:/home /home
 clush -g computes sudo mount -t nfs machine0:/apps /apps
@@ -161,7 +161,7 @@ Vérification que les partages ont été montés correctement :
 clush -g computes df -h | grep nvidia0
 ```
 
-Enfin, pour monter les répertoires automatiquement au démarrage des machines, ajouter ces lignes au fichier `/etc/fstab` de toutes les machines **sauf la root** :
+Enfin, pour monter les répertoires automatiquement au démarrage des machines, ajouter ces lignes au fichier `/etc/fstab` des machines **computes** :
 ````
 nvidia0:/home /home nfs defaults 0 0
 nvidia0:/apps /apps nfs defaults 0 0  
@@ -187,7 +187,7 @@ chmod +x createuser.sh
 *Source : <br>
 [https://serverfault.com/questions/849631/why-is-selinux-blocking-remote-ssh-access-without-a-password](https://serverfault.com/questions/849631/why-is-selinux-blocking-remote-ssh-access-without-a-password)*
 
-SELinux bloque l’accès de ssh aux répertoires et fichiers NFS, pour régler ce problème 2 options.
+SELinux bloque l’accès de **SSH** aux répertoires et fichiers **NFS**, pour régler ce problème 2 options.
     
 Retirer tout le système de sécurité SELinux avec :
 ```bash
@@ -196,22 +196,22 @@ setenforce 0
 
 OU
 
-Modifier la config pour laisser autoriser l’accès à ssh aux répertoires NFS
+Modifier la config pour autoriser l’accès à **SSH** aux répertoires **NFS**
 ```bash
 setsebool -P use_nfs_home_dirs 1
 ```
 
 # 5/ MPI
 
-Note : Un fichier de test pour MPI est dans le répertoire apps commun à toutes les machines.
+*Note : Un fichier de test pour MPI est dans le répertoire apps commun à toutes les machines.*
 
-### Installer mpi sur toutes les machines
+### Installer MPI sur toutes les machines
 ```bash
 clush -g all sudo yum -y install openmpi
 clush -g all sudo yum -y install openmpi-devel
 ```
 
-### Ajouter mpi au path
+### Ajouter MPI au path
 ```bash
 clush -g all "echo 'export PATH=/usr/lib64/openmpi/bin:\$PATH' | sudo tee /etc/profile.d/mpi.sh"
 clush -g all "echo 'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:\$LD_LIBRARY_PATH' | sudo tee -a /etc/profile.d/mpi.sh"
@@ -222,13 +222,13 @@ clush -g all "echo 'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:\$LD_LIBRARY_P
 clush -g all "source /etc/profile.d/mpi.sh"
 ```
 
-#### Compiler code mpi (sur une des machines vs toutes les machines)
+#### Compiler code MPI (sur une des machines ou sur toutes les machines)
 ```bash
 mpicc -o /apps/test_mpi /apps/test_mpi.c
 clush -g all mpicc -o /apps/test_mpi /apps/test_mpi.c
 ```
 
-####  Executer code mpi
+####  Executer code MPI (sur une des machines ou sur toutes les machines)
 ```bash
 mpirun --allow-run-as-root -n 4 /apps/test_mpi
 clush -g all mpirun --allow-run-as-root -n 4 /apps/test_mpi
@@ -244,7 +244,7 @@ clush -g all "TERM=xterm sl -a -l -F"
 
 # 6/ Slurm
 
-*Source : <br>
+*Sources : <br>
 [https://github.com/Artlands/Install-Slurm](https://github.com/Artlands/Install-Slurm)<br>
 [Youtube - How to Make a Cluster Computer](https://youtu.be/mm11Ws-9DRc?si=5W03ex3sy5CuHVsP)*
 
