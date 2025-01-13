@@ -187,7 +187,7 @@ chmod +x createuser.sh
 *Source : <br>
 [https://serverfault.com/questions/849631/why-is-selinux-blocking-remote-ssh-access-without-a-password](https://serverfault.com/questions/849631/why-is-selinux-blocking-remote-ssh-access-without-a-password)*
 
-SELinux bloque l’accès de **SSH** aux répertoires et fichiers **NFS**, pour régler ce problème 2 options.
+SELinux bloque l’accès de **SSH** aux répertoires et fichiers **NFS**, pour régler ce problème 2 options à réaliser sur toutes les machines.
     
 Retirer tout le système de sécurité SELinux avec :
 ```bash
