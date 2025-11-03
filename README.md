@@ -31,7 +31,7 @@ sudo hostnamectl set-hostname nvidia0
 sudo nano /etc/hosts
 ```
     
-Ajouts de l’ip de toutes les machines suivie de leur nom dans le DNS
+Ajouts de l’ip de toutes les machines suivie de leur nom dans le hosts
 ````
 10.124.2.46 nvidia0
 10.124.2.47 nvidia1
